@@ -36,7 +36,6 @@ NucleusDiameter=Dialog.getNumber();
 NucleusSurface=NucleusDiameter/2*NucleusDiameter/2*PI;
 minNucleusSurface=NucleusSurface/3;
 maxNucleusSurface=NucleusSurface*3;
-
 rep=getDirectory("Image Folder ?");
 nomrep=File.getName(rep);
 liste=getFileList(rep);
