@@ -1,0 +1,120 @@
+/* This macro helps the segmentation of neurons and nuclei images.
+it asks parameter for the minimal size of a binarized neurons to remove debris.
+Asks for an average nuclei diameter. The specific character in the name of Neuron and nuclei images
+And the folder name were are the images.
+It saves :
+the original neuron images
+the binarized image 
+the binarized nuclei 
+in a new subfolder "resultats"
+
+*/
+
+
+macro "segmentation  [F1]" {
+
+minNeuron=1000;
+NucleusDiameter=20;
+minDoG=1;
+maxDoG=100;
+
+
+
+Dialog.create("File names and parameter settings");
+Dialog.addString("Tubulin Staining ?","c1");
+Dialog.addNumber("Minimal size for a neuron ?",minNeuron);
+Dialog.addString("Nuclei Staining ?","c2");
+Dialog.addNumber("Nucleus diameter",NucleusDiameter);
+
+Dialog.show();
+
+tubName=Dialog.getString();
+neuronSize=Dialog.getNumber();
+nucleiName=Dialog.getString();
+NucleusDiameter=Dialog.getNumber();
+
+NucleusSurface=NucleusDiameter/2*NucleusDiameter/2*PI;
+minNucleusSurface=NucleusSurface/3;
+maxNucleusSurface=NucleusSurface*3;
+
+rep=getDirectory("Image Folder ?");
+nomrep=File.getName(rep);
+liste=getFileList(rep);
+File.makeDirectory(rep+"\\resultats_"+nomrep+"\\");
+newRep=rep+"\\resultats_"+nomrep+"\\";
+for (i=0;i<liste.length;i++) 
+	{
+
+	if (indexOf(liste[i], nucleiName)!=-1)
+		{
+  			open(rep+liste[i]);
+
+run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
+title=getTitle();
+
+filter (title, "Gaussian Blur", "Gaussian Blur", NucleusDiameter/4, NucleusDiameter*4);  
+
+
+
+setAutoThreshold("Default dark");
+
+
+waitForUser("Set the threshold for nuclei : \n You may do nothing !!!\n Zoom in to see better !!!");
+
+setOption("BlackBackground", true);
+run("Convert to Mask");
+run("Watershed");
+run("Analyze Particles...", "size=&minNucleusSurface-&maxNucleusSurface circularity=0.5-1.00 show=Masks exclude in_situ");
+title=File.nameWithoutExtension;
+saveAs("tiff",newRep+"Nucleus_Bin_"+title); close();
+
+}
+
+if (indexOf(liste[i], tubName)!=-1)
+		{
+  			open(rep+liste[i]);
+run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
+title=File.nameWithoutExtension;
+saveAs("tiff",newRep+"Neuron_"+title);
+title=getTitle();
+filter (title,"Median","Gaussian Blur",minDoG,maxDoG);
+
+setAutoThreshold("Triangle dark");
+
+
+waitForUser("Set the threshold for Neurons");
+setOption("BlackBackground", true);
+run("Convert to Mask");
+run("Analyze Particles...", "size=&minNeuron-100000 circularity=0-1.00 show=Masks exclude in_situ");
+title=File.nameWithoutExtension;
+saveAs("tiff",newRep+"NeuronBin_"+title); close();
+
+}
+} /// End of liste length
+print("Minimal size for a neuron : "  +neuronSize+ "   Minimal size for nucleus :" +minNucleusSurface+ "   Maximal size for nucleus:" +maxNucleusSurface+ "");			
+print("Filter size for neuron segmentation  : "+minDoG+" and "+maxDoG);
+selectWindow("Log"); saveAs("Text",newRep+"Parameter_"+title); run("Close");	
+} /// End of macro
+
+//////////////////// Functions//////////////////////////////////////////////////////////////////////////////
+function filter (image,filter1,filter2,size1,size2) {
+
+selectWindow(image);
+
+run("Duplicate...", "title=1");
+run("Duplicate...", "title=2"); 
+if (filter1=="Median"){
+selectWindow("1");run(filter1+"...","radius="+size1);}
+if (filter1=="Gaussian Blur"){
+selectWindow("1");run(filter1+"...","sigma="+size1);} 
+
+if (filter2=="Median"){
+selectWindow("2");run(filter2+"...","radius="+size2);}
+if (filter2=="Gaussian Blur"){
+selectWindow("2");run(filter2+"...","sigma="+size2);} 
+
+imageCalculator("Subtract","1","2");
+selectWindow("2"); close();
+selectWindow(image);close();
+selectWindow("1"); rename (image);
+}
