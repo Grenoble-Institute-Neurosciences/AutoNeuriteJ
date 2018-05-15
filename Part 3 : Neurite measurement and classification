@@ -23,7 +23,7 @@ list=newArray(20);
 Dialog.create("Parameter settings");
 Dialog.addNumber("Minimal size to be a Neurite",minNeurite);
 Dialog.addNumber("Minimal size to be an Axon",minAxon);
-Dialog.addNumber("Ratio (Axon Length)/(Mean Neurites length) to be an Axon",ratio);
+Dialog.addNumber("Ratio (Axon Length)/(Primary Neurites length) to be an Axon",ratio);
 Dialog.show();
 minNeurite=Dialog.getNumber();
 minAxon=Dialog.getNumber();
