@@ -173,8 +173,7 @@ setBatchMode(true);
 
 	/////////////////////////////  measure of neurite's length, and rank  //////////////////////////////////////////////////////////////
 			grand=newArray(1000);	MoyPrim=0	; NbrPrim=0	;	NbrNeurite=0;	LongPrim=0;													// For mean length computation of primary
-			pointesSuprime=0;
-			for(i=0;i<Nb_pointes;i++){ 													            // for each neurite i
+						for(i=0;i<Nb_pointes;i++){ 													            // for each neurite i
 				nom="Neurone_"+j+"_Neurite"+i+1;selectWindow(nom);
 				
 				run("Select None");getStatistics(area, mean, min, max, std, histogram);
