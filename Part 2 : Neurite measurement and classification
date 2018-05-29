@@ -1,4 +1,4 @@
-macro "AutoNeuriteJ_partIII [F1]" {
+macro "AutoNeuriteJ_partII [F1]" {
 //////////////////////// Different measures : neurone cell body expansion /////////////////////////////////////////////////////
 
 
@@ -173,8 +173,19 @@ setBatchMode(true);
 
 	/////////////////////////////  measure of neurite's length, and rank  //////////////////////////////////////////////////////////////
 			grand=newArray(1000);	MoyPrim=0	; NbrPrim=0	;	NbrNeurite=0;	LongPrim=0;													// For mean length computation of primary
+			pointesSuprime=0;
 			for(i=0;i<Nb_pointes;i++){ 													            // for each neurite i
 				nom="Neurone_"+j+"_Neurite"+i+1;selectWindow(nom);
+				
+				run("Select None");getStatistics(area, mean, min, max, std, histogram);
+						if (mean==0){
+				grand[i]=0;
+				area=0;
+				selectWindow(nom);close();}
+			
+			else{
+				
+				
 				x=getCoordinate("BX", i); y=getCoordinate("BY", i);
 				//selectWindow("Results");	IJ.renameResults("Results2");
 
@@ -193,7 +204,7 @@ setBatchMode(true);
 					MoyPrim=LongPrim/(NbrPrim);                   // Mean of primary segments, without the longest
 				}
 			}
-				
+		}	
 
 /////////////////////////////////////////Axon determination : potential axon vs major primary dendrite /////////////////////////////////////////////////////////////////////////////////////				
 								
@@ -234,10 +245,13 @@ setBatchMode(true);
 				for(i=0;i<Nb_pointes;i++){ // // For each end, we obtain the type of neurite (type_neurite), in a specific color 
 				
 					if (grand[i]<=minNeurite){									// If  neurite too small, it is deleted of the stack Neurone_use
-						selectWindow("Neurone_"+j+"_Neurite"+i+1); close();		
+						
+					if(isOpen("Neurone_"+j+"_Neurite"+i+1)){	
+					selectWindow("Neurone_"+j+"_Neurite"+i+1); close();}		
 					} 
 					
 					else {
+					if(isOpen("Neurone_"+j+"_Neurite"+i+1)){	
 					selectWindow("Neurone_"+j+"_Neurite"+i+1);
 					run("Select None");getStatistics(area, mean, min, max, std, histogram);
 						if (mean!=0){
@@ -247,7 +261,7 @@ setBatchMode(true);
 							run("Fill", "slice");
 						} 
 					run("Select None");
-					}
+					}}
 				}
 	
 /////////////////////////////////////////Test if their is several neurite to make a stack	//////////////////////////
