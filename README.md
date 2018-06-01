@@ -7,7 +7,7 @@ To install the macro you only need to separately copy :
                                 _ The text file called "Neuron.lut" inside the "Luts" folder of Fiji/ImageJ.
                                 
         
-You will find the macro inside the ">>" button on the right of Fiji/imageJ toolbar. 3 buttons (0; 1; 2) will appear and correspond to itch part of the macro.
+Then you will find the macro inside the ">>" button on the right of Fiji/imageJ toolbar. 3 buttons (0; 1; 2) will appear and correspond to itch part of the macro.
                                 
 
 Note that 2 others ImageJ/Figi plugins are requested by the macro :
