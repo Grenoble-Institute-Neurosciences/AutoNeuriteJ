@@ -1,9 +1,12 @@
 # AutoNeuriteJ 
 
 To install the macro you only need to separately copy :
+
                                 _ The 3 parts of the macro in the "macros" folder of Fiji/ImageJ under the names AutoNeuriteJ_Part0.ijm ; AutoNeuriteJ_Part1.ijm ; AutoNeuriteJ_Part2.ijm
-                                _ The text file named "AutoRun AutoneuriteJ.ijm" inside the "toolsets" folder inside the "macros" folder of Fiji/ImageJ.
- 
+                                _ The text file called "AutoRun AutoneuriteJ.ijm" inside the "toolsets" folder inside the "macros" folder of Fiji/ImageJ.
+                                _ The text file called "Neuron.lut" inside the "Luts" folder of Fiji/ImageJ.
+                                
+        
 You will find the macro inside the ">>" button on the right of Fiji/imageJ toolbar. 3 buttons (0; 1; 2) will appear and correspond to itch part of the macro.
                                 
 
