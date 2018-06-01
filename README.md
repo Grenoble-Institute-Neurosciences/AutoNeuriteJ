@@ -1,4 +1,12 @@
-# Neuronator
+# AutoNeuriteJ 
+
+To install the macro you only need to separately copy :
+                                _ The 3 parts of the macro in the "macros" folder of Fiji/ImageJ under the names AutoNeuriteJ_Part0.ijm ; AutoNeuriteJ_Part1.ijm ; AutoNeuriteJ_Part2.ijm
+                                _ The text file named "AutoRun AutoneuriteJ.ijm" inside the "toolsets" folder inside the "macros" folder of Fiji/ImageJ.
+ 
+You will find the macro inside the ">>" button on the right of Fiji/imageJ toolbar. 3 buttons (0; 1; 2) will appear and correspond to itch part of the macro.
+                                
+
 Note that 2 others ImageJ/Figi plugins are requested by the macro :
 
         The plugin "Analyze Skeleton 2D/3D"  Developped by Ignacio Arganda-Carreras http://imagej.net/AnalyzeSkeleton
