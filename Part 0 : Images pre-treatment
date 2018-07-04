@@ -28,10 +28,6 @@ Dialog.addNumber("Nucleus diameter",NucleusDiameter);
 
 Dialog.show();
 
-tubName=Dialog.getString();
-neuronSize=Dialog.getNumber();
-nucleiName=Dialog.getString();
-NucleusDiameter=Dialog.getNumber();
 
 NucleusSurface=NucleusDiameter/2*NucleusDiameter/2*PI;
 minNucleusSurface=NucleusSurface/3;
