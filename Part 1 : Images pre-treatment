@@ -53,7 +53,7 @@ Dialog.addString("Neuron image name ? (Correponding image file name must contain
 Dialog.addNumber("Minimal size for a neuron ?",minNeuron_part1);
 Dialog.addString("Nuclei image name ? (Correponding image file name must contain the term entered)","DAPI");
 Dialog.addNumber("Nucleus diameter (in pixels)",NucleusDiameter);
-Dialog.addNumber("Scale factor \n (Will divide the size of the image by the value)",Taille);
+Dialog.addNumber("Scale factor (Will multiply the size of the image by the value)",Taille);
 Dialog.show();
 
 tubName=Dialog.getString();
