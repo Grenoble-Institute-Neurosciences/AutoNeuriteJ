@@ -153,4 +153,3 @@ selectWindow("2"); close();
 selectWindow(image);close();
 selectWindow("1"); rename (image);
 }
-}
