@@ -91,11 +91,11 @@ minDoG=1;
 maxDoG=100;
 
 Dialog.create("File names and parameter settings");
-Dialog.addString("Tubulin Staining ?","Cy3");
+Dialog.addString("Neuron image name ? (Correponding image file name must contain the term entered)","Cy3");
 Dialog.addNumber("Minimal size for a neuron ?",minNeuron_part1);
-Dialog.addString("Nuclei Staining ?","DAPI");
-Dialog.addNumber("Nucleus diameter",NucleusDiameter);
-Dialog.addNumber("Scalling factor",Taille);
+Dialog.addString("Nuclei image name ? (Correponding image file name must contain the term entered)","DAPI");
+Dialog.addNumber("Nucleus diameter (in pixels)",NucleusDiameter);
+Dialog.addNumber("Scale factor \n (Will divide the size of the image by the value)",Taille);
 Dialog.show();
 
 tubName=Dialog.getString();
@@ -107,6 +107,7 @@ Taille=Dialog.getNumber();
 filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
 if (filesaver==1){
 	File.delete(ParameterFile+"/AutoneuriteJ_settings");
+}
 		////Part1settings////
 	print(Taille); /// (1)
 	print(minNeuron_part1); /// (2)
@@ -121,22 +122,6 @@ if (filesaver==1){
 	print(ratio); 		///(9)	
 	
 	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
-}
-else {
-	////Part1settings////
-	print(Taille); /// (1)
-	print(minNeuron_part1); /// (2)
-	print(NucleusDiameter); ///(3)
-	////Part2_settings////
-	print(minNeuriticTree); // (4) 
-	print(minNeuron_part2);  // (5)
-	print(minLengthSkelet); // (6) 
-	////Part3 settings////
-	print(minAxon); 	///(7)			
-	print(minNeurite); 	///(8)			
-	print(ratio); 		///(9)	
-	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
-}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 NucleusSurface=NucleusDiameter/2*NucleusDiameter/2*PI;
@@ -186,30 +171,36 @@ saveAs("tiff",newRep+"Nucleus_Bin_"+title); close();close();
 
 if (indexOf(liste[i], tubName)!=-1)
 		{
-  open(rep+liste[i]);
-  run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
-  title=File.nameWithoutExtension;
-  getDimensions(width, height, channels, slices, frames);
-  xsize=width*Taille;
-  ysize=height*Taille; 
-	run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
-  saveAs("tiff",newRep+"Neuron_"+title);
+  			open(rep+liste[i]);
+run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
+title=File.nameWithoutExtension;
+getDimensions(width, height, channels, slices, frames);
+xsize=width*Taille;
+ysize=height*Taille; 
+
+		run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
+saveAs("tiff",newRep+"Neuron_"+title);
 			close();
-  title=getTitle();
-   filter (title,"Median","Gaussian Blur",minDoG,maxDoG);
-  setAutoThreshold("Triangle dark");
-  waitForUser("Set the threshold for Neurons");
-  setOption("BlackBackground", true);
-  run("Convert to Mask");
-  run("Analyze Particles...", "size=&minNeuron_part1-100000 circularity=0-0.5 show=Masks exclude in_situ");
-  title=File.nameWithoutExtension;
-  getDimensions(width, height, channels, slices, frames);
-  xsize=width*Taille;
-  ysize=height*Taille; 
+title=getTitle();
+ 
+filter (title,"Median","Gaussian Blur",minDoG,maxDoG);
+
+setAutoThreshold("Triangle dark");
+
+
+waitForUser("Set the threshold for Neurons");
+setOption("BlackBackground", true);
+run("Convert to Mask");
+run("Analyze Particles...", "size=&minNeuron_part1-100000 circularity=0-0.5 show=Masks exclude in_situ");
+title=File.nameWithoutExtension;
+getDimensions(width, height, channels, slices, frames);
+xsize=width*Taille;
+ysize=height*Taille; 
 			run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
 			run("Multiply...", "value=2500.000");
 
-  saveAs("tiff",newRep+"NeuronBin_"+title); close(); close();
+saveAs("tiff",newRep+"NeuronBin_"+title); close(); close();
+
 }
 } /// End of liste length
 print("Scale =" + Taille);
@@ -260,6 +251,7 @@ filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
 if (filesaver==1){
 	File.delete(ParameterFile+"/AutoneuriteJ_settings");
 		////Part1settings////
+}
 	print(Taille); /// (1)
 	print(minNeuron_part1); /// (2)
 	print(NucleusDiameter); ///(3)
@@ -273,22 +265,7 @@ if (filesaver==1){
 	print(ratio); 		///(9)	
 	
 	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
-}
-else {
-	////Part1settings////
-	print(Taille); /// (1)
-	print(minNeuron_part1); /// (2)
-	print(NucleusDiameter); ///(3)
-	////Part2_settings////
-	print(minNeuriticTree); // (4) 
-	print(minNeuron_part2);  // (5)
-	print(minLengthSkelet); // (6) 
-	////Part3 settings////
-	print(minAxon); 	///(7)			
-	print(minNeurite); 	///(8)			
-	print(ratio); 		///(9)	
-	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
-}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////// 
  
 ///////////////////////// Records the time at start of the macro 
@@ -370,19 +347,19 @@ SkelettooShort=0; // Sets the number of cells with too short skelet that will be
 	roiManager("reset");
 
 	///////////////////and removes nuclei not in a neuron
-  imageCalculator("AND", "Nuclei","Binneurons"); 
+imageCalculator("AND", "Nuclei","Binneurons"); 
 
 /////////////// Creates Image of cell bodies by dilating and opening the nuclei in neurons
-  run("BinaryConditionalDilate ", "mask=Binneurons seed=Nuclei  iterations=10 create white");
-  run("Options...", "iterations=3 count=1 black do=Open");
-  run("BinaryConditionalDilate ", "mask=Dilated seed=Nuclei iterations=-1 white"); //removes small bodies after Opening
-  saveAs("tiff",sauvegarde+"/body_"+title2); rename("Bodies");
+run("BinaryConditionalDilate ", "mask=Binneurons seed=Nuclei  iterations=10 create white");
+run("Options...", "iterations=3 count=1 black do=Open");
+run("BinaryConditionalDilate ", "mask=Dilated seed=Nuclei iterations=-1 white"); //removes small bodies after Opening
+saveAs("tiff",sauvegarde+"/body_"+title2); rename("Bodies");
 
 
 ////////////////////// Add in ROImanager neurons with a single nucleus
 
-  selectWindow("Binneurons"); run("Analyze Particles...", "add");
-  number_Neurons=roiManager("count");
+selectWindow("Binneurons"); run("Analyze Particles...", "add");
+number_Neurons=roiManager("count");
 	
 //////////////////////////////////////// Create images of Neurons  (Body-Skelet-BodySkelet-Original-Binarized-NoBodySkelet)//////////////////
 
@@ -604,6 +581,7 @@ ratio=Dialog.getNumber();
 filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
 if (filesaver==1){
 	File.delete(ParameterFile+"/AutoneuriteJ_settings");
+}
 		////Part1settings////
 	print(Taille); /// (1)
 	print(minNeuron_part1); /// (2)
@@ -618,22 +596,7 @@ if (filesaver==1){
 	print(ratio); 		///(9)	
 	
 	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
-}
-else {
-	////Part1settings////
-	print(Taille); /// (1)
-	print(minNeuron_part1); /// (2)
-	print(NucleusDiameter); ///(3)
-	////Part2_settings////
-	print(minNeuriticTree); // (4) 
-	print(minNeuron_part2);  // (5)
-	print(minLengthSkelet); // (6) 
-	////Part3 settings////
-	print(minAxon); 	///(7)			
-	print(minNeurite); 	///(8)			
-	print(ratio); 		///(9)	
-	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
-}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 for (e=0; e<nombre_condition; e++) {                   // Ask for the directory of each stack to be analysed.
