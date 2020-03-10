@@ -6,9 +6,8 @@ This macro allow the selection of neurons to quantify the neurite arborescence f
 It can proceeds several mosaic saved in different folders.
 
 This macro requires in each folder :
-		3 images in this order (beware to the naming ) :
+		2 images in this folder :
 		A original image of neurons (e.g neurons.tif)
-		A binary image of neurons (e.g neurons_bin.tif)
 		A binary image of nucleus (e.g nuclei.tif)
 
 Additional plugins to install in Fiji/plugins: 
