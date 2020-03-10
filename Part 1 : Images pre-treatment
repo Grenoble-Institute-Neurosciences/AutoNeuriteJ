@@ -9,6 +9,41 @@ the binarized nuclei
 in a new subfolder "resultats"
 */
 macro "AutoNeuriteJ Part1  [F1]" {
+//////////////////////// Parameters////////////////////////////////
+Taille=1;                   // Scalling factor to reduce image size before processing 
+minNeuron_part1=10;			// Minimal neuron area in order to exclude debris
+NucleusDiameter=20;			// Diameter of nuclei
+minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
+minNeuron_part2=100;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
+minLengthSkelet=50;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
+minAxon=150; 				// Minimal length to be an axon (pixels)
+minNeurite=10; 				// Minimal length to be a neurite (pixels)
+ratio=2; 					// Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
+
+/////////////////////////////pic up the previewsly used settings///////////////////////////
+ParameterFile=getDirectory("temp"); 
+
+filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
+if (filesaver==1){
+	
+	filestring=File.openAsString(ParameterFile+"/AutoneuriteJ_settings.txt");
+	rows=split(filestring, "\n");
+	settings=newArray(rows.length);
+		
+	for(i=0; i<rows.length; i++){                 ///////////transform text from txt files into integers
+		columns=split(rows[i],"\t");
+		settings[i]=parseInt(columns[0]);
+	}
+	Taille=settings[0];
+	minNeuron_part1=settings[1];
+	NucleusDiameter=settings[2];
+	minNeuriticTree=settings[3]; 
+	minNeuron_part2=settings[4];  
+	minLengthSkelet=settings[5];
+	minAxon=settings[6];				
+	minNeurite=settings[7]; 				
+	ratio=settings[8];
+}
 
 minDoG=1;
 maxDoG=100;
