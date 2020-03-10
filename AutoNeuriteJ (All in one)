@@ -6,8 +6,9 @@ This macro allow the selection of neurons to quantify the neurite arborescence f
 It can proceeds several mosaic saved in different folders.
 
 This macro requires in each folder :
-		2 images in this folder :
+		3 images in this order (beware to the naming ) :
 		A original image of neurons (e.g neurons.tif)
+		A binary image of neurons (e.g neurons_bin.tif)
 		A binary image of nucleus (e.g nuclei.tif)
 
 Additional plugins to install in Fiji/plugins: 
@@ -94,7 +95,7 @@ Dialog.addString("Neuron image name ? (Correponding image file name must contain
 Dialog.addNumber("Minimal size for a neuron ?",minNeuron_part1);
 Dialog.addString("Nuclei image name ? (Correponding image file name must contain the term entered)","DAPI");
 Dialog.addNumber("Nucleus diameter (in pixels)",NucleusDiameter);
-Dialog.addNumber("Scale factor \n (Will divide the size of the image by the value)",Taille);
+Dialog.addNumber("Scale factor (Will multiply the size of the image by the value)",Taille);
 Dialog.show();
 
 tubName=Dialog.getString();
