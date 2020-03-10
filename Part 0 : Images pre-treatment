@@ -7,31 +7,45 @@ the original neuron images
 the binarized image 
 the binarized nuclei 
 in a new subfolder "resultats"
-
 */
+macro "AutoNeuriteJ Part1  [F1]" {
 
-
-macro "segmentation  [F1]" {
-
-minNeuron=1000;
-NucleusDiameter=20;
 minDoG=1;
 maxDoG=100;
 
-
-
 Dialog.create("File names and parameter settings");
-Dialog.addString("Tubulin Staining ?","c1");
-Dialog.addNumber("Minimal size for a neuron ?",minNeuron);
-Dialog.addString("Nuclei Staining ?","c2");
-Dialog.addNumber("Nucleus diameter",NucleusDiameter);
-
+Dialog.addString("Neuron image name ? (Correponding image file name must contain the term entered)","Cy3");
+Dialog.addNumber("Minimal size for a neuron ?",minNeuron_part1);
+Dialog.addString("Nuclei image name ? (Correponding image file name must contain the term entered)","DAPI");
+Dialog.addNumber("Nucleus diameter (in pixels)",NucleusDiameter);
+Dialog.addNumber("Scale factor \n (Will divide the size of the image by the value)",Taille);
 Dialog.show();
 
 tubName=Dialog.getString();
 neuronSize=Dialog.getNumber();
 nucleiName=Dialog.getString();
 NucleusDiameter=Dialog.getNumber();
+Taille=Dialog.getNumber();
+////////////////////////////////////////////Save the new parameters used/////////////////////////
+filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
+if (filesaver==1){
+	File.delete(ParameterFile+"/AutoneuriteJ_settings");
+}
+		////Part1settings////
+	print(Taille); /// (1)
+	print(minNeuron_part1); /// (2)
+	print(NucleusDiameter); ///(3)
+	////Part2_settings////
+	print(minNeuriticTree); // (4) 
+	print(minNeuron_part2);  // (5)
+	print(minLengthSkelet); // (6) 
+	////Part3 settings////
+	print(minAxon); 	///(7)			
+	print(minNeurite); 	///(8)			
+	print(ratio); 		///(9)	
+	
+	selectWindow("Log"); saveAs("Text",ParameterFile+"/AutoneuriteJ_settings"); run("Close");
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 NucleusSurface=NucleusDiameter/2*NucleusDiameter/2*PI;
 minNucleusSurface=NucleusSurface/3;
@@ -42,6 +56,9 @@ nomrep=File.getName(rep);
 liste=getFileList(rep);
 File.makeDirectory(rep+"\\resultats_"+nomrep+"\\");
 newRep=rep+"\\resultats_"+nomrep+"\\";
+
+
+
 for (i=0;i<liste.length;i++) 
 	{
 
@@ -52,9 +69,12 @@ for (i=0;i<liste.length;i++)
 run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 title=getTitle();
 
+getDimensions(width, height, channels, slices, frames);
+xsize=width*Taille;
+ysize=height*Taille; 
+
+
 filter (title, "Gaussian Blur", "Gaussian Blur", NucleusDiameter/4, NucleusDiameter*4);  
-
-
 
 setAutoThreshold("Default dark");
 
@@ -66,7 +86,9 @@ run("Convert to Mask");
 run("Watershed");
 run("Analyze Particles...", "size=&minNucleusSurface-&maxNucleusSurface circularity=0.5-1.00 show=Masks exclude in_situ");
 title=File.nameWithoutExtension;
-saveAs("tiff",newRep+"Nucleus_Bin_"+title); close();
+run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
+			run("Multiply...", "value=2500.000");
+saveAs("tiff",newRep+"Nucleus_Bin_"+title); close();close();
 
 }
 
@@ -75,8 +97,15 @@ if (indexOf(liste[i], tubName)!=-1)
   			open(rep+liste[i]);
 run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 title=File.nameWithoutExtension;
+getDimensions(width, height, channels, slices, frames);
+xsize=width*Taille;
+ysize=height*Taille; 
+
+		run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
 saveAs("tiff",newRep+"Neuron_"+title);
+			close();
 title=getTitle();
+ 
 filter (title,"Median","Gaussian Blur",minDoG,maxDoG);
 
 setAutoThreshold("Triangle dark");
@@ -85,17 +114,23 @@ setAutoThreshold("Triangle dark");
 waitForUser("Set the threshold for Neurons");
 setOption("BlackBackground", true);
 run("Convert to Mask");
-run("Analyze Particles...", "size=&minNeuron-100000 circularity=0-1.00 show=Masks exclude in_situ");
+run("Analyze Particles...", "size=&minNeuron_part1-100000 circularity=0-0.5 show=Masks exclude in_situ");
 title=File.nameWithoutExtension;
-saveAs("tiff",newRep+"NeuronBin_"+title); close();
+getDimensions(width, height, channels, slices, frames);
+xsize=width*Taille;
+ysize=height*Taille; 
+			run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
+			run("Multiply...", "value=2500.000");
+
+saveAs("tiff",newRep+"NeuronBin_"+title); close(); close();
 
 }
 } /// End of liste length
+print("Scale =" + Taille);
 print("Minimal size for a neuron : "  +neuronSize+ "   Minimal size for nucleus :" +minNucleusSurface+ "   Maximal size for nucleus:" +maxNucleusSurface+ "");			
 print("Filter size for neuron segmentation  : "+minDoG+" and "+maxDoG);
 selectWindow("Log"); saveAs("Text",newRep+"Parameter_"+title); run("Close");	
 } /// End of macro
-
 //////////////////// Functions//////////////////////////////////////////////////////////////////////////////
 function filter (image,filter1,filter2,size1,size2) {
 
@@ -117,4 +152,5 @@ imageCalculator("Subtract","1","2");
 selectWindow("2"); close();
 selectWindow(image);close();
 selectWindow("1"); rename (image);
+}
 }
