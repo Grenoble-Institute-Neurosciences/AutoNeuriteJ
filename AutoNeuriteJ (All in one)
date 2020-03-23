@@ -32,7 +32,7 @@ It creates 6 stacks :
 //////////////////////// Parameters////////////////////////////////
 Taille=1;                   // Scalling factor to reduce image size before processing 
 minNeuron_part1=10;			// Minimal neuron area in order to exclude debris
-NucleusDiameter=20;			// Diameter of nuclei
+NucleusDiameter=15;			// Diameter of nuclei
 minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
 minNeuron_part2=100;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
 minLengthSkelet=50;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
@@ -44,6 +44,7 @@ ratio=2; 					// Minimal ratio between (mean primary neurite length) and (axonal
 ParameterFile=getDirectory("temp"); 
 
 filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
+
 if (filesaver==1){
 	
 	filestring=File.openAsString(ParameterFile+"/AutoneuriteJ_settings.txt");
@@ -69,8 +70,8 @@ if (filesaver==1){
 MacroPart=newArray("Part1","Part2","Part3");
 
 Dialog.create("Welcome to AutoneuriteJ !");
-Dialog.addMessage("Part 1 : Image processing for neurons segmentation \n Part 2 : Isolated neurones stack creation from Part 1 processed images \n Part 3 : Neurites quantification and classification");
-Dialog.addChoice("Witch part of the macro would you like to launch?", MacroPart, true);
+Dialog.addMessage("Part 1 : Image pre-treatment, before neuron segmentation \n Part 2 : Creation of a stack of isolated neurons from Part 1 processed images \n Part 3 : Neurites quantification and classification");
+Dialog.addChoice("Which part of the macro would you like to launch?", MacroPart, true);
 Dialog.show();
 Part=Dialog.getChoice();
 
@@ -90,16 +91,16 @@ macro "AutoNeuriteJ Part1  [F1]" {
 minDoG=1;
 maxDoG=100;
 
-Dialog.create("File names and parameter settings");
-Dialog.addString("Neuron image name ? (Correponding image file name must contain the term entered)","Cy3");
-Dialog.addNumber("Minimal size for a neuron ?",minNeuron_part1);
-Dialog.addString("Nuclei image name ? (Correponding image file name must contain the term entered)","DAPI");
+Dialog.create("File names and parameter settings (AutoneuriteJ_Part1)");
+Dialog.addString("Neuron image name must contain :","Cy3");
+Dialog.addNumber("Minimal area for a neuron (in pixels) ?",minNeuron_part1);
+Dialog.addString("Neuron image name must contain ?","DAPI");
 Dialog.addNumber("Nucleus diameter (in pixels)",NucleusDiameter);
-Dialog.addNumber("Scale factor (Will multiply the size of the image by the value)",Taille);
+Dialog.addNumber("Actual pixel size (in µm):",Taille);
 Dialog.show();
 
 tubName=Dialog.getString();
-neuronSize=Dialog.getNumber();
+minNeuron_part1=Dialog.getNumber();
 nucleiName=Dialog.getString();
 NucleusDiameter=Dialog.getNumber();
 Taille=Dialog.getNumber();
@@ -108,6 +109,7 @@ filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
 if (filesaver==1){
 	File.delete(ParameterFile+"/AutoneuriteJ_settings");
 }
+	selectWindow("Log"); run("Close");
 		////Part1settings////
 	print(Taille); /// (1)
 	print(minNeuron_part1); /// (2)
@@ -142,13 +144,14 @@ for (i=0;i<liste.length;i++)
 	if (indexOf(liste[i], nucleiName)!=-1)
 		{
   			open(rep+liste[i]);
-
+getPixelSize(unite, pixelWidth, pixelHeight);
 run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 title=getTitle();
 
 getDimensions(width, height, channels, slices, frames);
-xsize=width*Taille;
-ysize=height*Taille; 
+Taille2=Taille/1.3;
+xsize=width*Taille2;
+ysize=height*Taille2;
 
 
 filter (title, "Gaussian Blur", "Gaussian Blur", NucleusDiameter/4, NucleusDiameter*4);  
@@ -163,7 +166,7 @@ run("Convert to Mask");
 run("Watershed");
 run("Analyze Particles...", "size=&minNucleusSurface-&maxNucleusSurface circularity=0.5-1.00 show=Masks exclude in_situ");
 title=File.nameWithoutExtension;
-run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
+run("Scale...", "x=Taille2 y=Taille2 width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
 			run("Multiply...", "value=2500.000");
 saveAs("tiff",newRep+"Nucleus_Bin_"+title); close();close();
 
@@ -178,7 +181,7 @@ getDimensions(width, height, channels, slices, frames);
 xsize=width*Taille;
 ysize=height*Taille; 
 
-		run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
+		run("Scale...", "x=Taille2 y=Taille2 width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
 saveAs("tiff",newRep+"Neuron_"+title);
 			close();
 title=getTitle();
@@ -196,15 +199,17 @@ title=File.nameWithoutExtension;
 getDimensions(width, height, channels, slices, frames);
 xsize=width*Taille;
 ysize=height*Taille; 
-			run("Scale...", "x=Taille y=Taille width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
+			run("Scale...", "x=Taille2 y=Taille2 width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
 			run("Multiply...", "value=2500.000");
 
 saveAs("tiff",newRep+"NeuronBin_"+title); close(); close();
 
 }
 } /// End of liste length
-print("Scale =" + Taille);
-print("Minimal size for a neuron : "  +neuronSize+ "   Minimal size for nucleus :" +minNucleusSurface+ "   Maximal size for nucleus:" +maxNucleusSurface+ "");			
+print("Original pixel size :"+pixelWidth+" "+unite);
+print("Image scaling factor =" + Taille2);
+print("Quantification pixel size =" + pixelWidth*(1/Taille2) +" "+unite);
+print("Minimal area for a neuron : "  +minNeuron_part1+ "   Minimal area for nucleus :" +minNucleusSurface+ "   Maximal area for nucleus:" +maxNucleusSurface+ "");			
 print("Filter size for neuron segmentation  : "+minDoG+" and "+maxDoG);
 selectWindow("Log"); saveAs("Text",newRep+"Parameter_"+title); run("Close");	
 } /// End of macro
@@ -236,10 +241,10 @@ if (Part=="Part2") {
  macro "AutoNeuriteJ Part2 [F1]" {
  /////////////////////////////// Some parameters to be tuned.
  
-Dialog.create("Parameter settings");
-Dialog.addNumber("Minimal Area for a binary Neuron :",minNeuron_part2);
+Dialog.create("Parameter settings(AutoneuriteJ_Part2)");
+Dialog.addNumber("Minimal area for a binary Neuron :",minNeuron_part2);
 Dialog.addNumber("Minimal skeleton length of a neuritic tree :",minNeuriticTree);
-Dialog.addNumber("Minimal Total skeleton length to consider a neuron :",minLengthSkelet);
+Dialog.addNumber("Minimal total skeleton length to consider a neuron :",minLengthSkelet);
 Dialog.show();
 
 minNeuron_part2=Dialog.getNumber();
@@ -252,6 +257,7 @@ if (filesaver==1){
 	File.delete(ParameterFile+"/AutoneuriteJ_settings");
 		////Part1settings////
 }
+	selectWindow("Log"); run("Close");
 	print(Taille); /// (1)
 	print(minNeuron_part1); /// (2)
 	print(NucleusDiameter); ///(3)
@@ -563,15 +569,15 @@ getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour0, minute0, second, msec)
 
 //////////////////////////stack opening 
 defaultValue=1;
-nombre_condition=getNumber("How many conditions do you have to analyze?", defaultValue);
+nombre_condition=getNumber("How many conditions to analyze?", defaultValue);
  // Ask for the number of stack to be analysed
 path=newArray(nombre_condition);
 list=newArray(20);
 	
-Dialog.create("Parameter settings");
-Dialog.addNumber("Minimal size to be a Neurite",minNeurite);
-Dialog.addNumber("Minimal size to be an Axon",minAxon);
-Dialog.addNumber("Ratio (Axon Length)/(Primary Neurites length) to be an Axon",ratio);
+Dialog.create("Parameter settings (AutoneuriteJ_Part2)");
+Dialog.addNumber("Minimal size for a Neurite",minNeurite);
+Dialog.addNumber("Minimal size for an Axon",minAxon);
+Dialog.addNumber("Ratio (Axon Length)/(Longest Primary Neurites length) to be an Axon",ratio);
 Dialog.show();
 minNeurite=Dialog.getNumber();
 minAxon=Dialog.getNumber();
@@ -582,6 +588,7 @@ filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
 if (filesaver==1){
 	File.delete(ParameterFile+"/AutoneuriteJ_settings");
 }
+	selectWindow("Log"); run("Close");
 		////Part1settings////
 	print(Taille); /// (1)
 	print(minNeuron_part1); /// (2)
