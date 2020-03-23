@@ -53,7 +53,7 @@ if (filesaver==1){
 		
 	for(i=0; i<rows.length; i++){                 ///////////transform text from txt files into integers
 		columns=split(rows[i],"\t");
-		settings[i]=parseInt(columns[0]);
+		settings[i]=parseFloat(columns[0]);
 	}
 	Taille=settings[0];
 	minNeuron_part1=settings[1];
