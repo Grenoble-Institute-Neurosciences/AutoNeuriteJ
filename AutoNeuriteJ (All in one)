@@ -6,10 +6,9 @@ This macro allow the selection of neurons to quantify the neurite arborescence f
 It can proceeds several mosaic saved in different folders.
 
 This macro requires in each folder :
-		3 images in this order (beware to the naming ) :
-		A original image of neurons (e.g neurons.tif)
-		A binary image of neurons (e.g neurons_bin.tif)
-		A binary image of nucleus (e.g nuclei.tif)
+		2 images(beware to the naming ) :
+			A original image of neurons (e.g neurons.tif)
+			A binary image of nucleus (e.g nuclei.tif)
 
 Additional plugins to install in Fiji/plugins: 
 		The plugin "Analyze Skeleton 2D/3D"  Developped by Ignacio Arganda-Carreras http://imagej.net/AnalyzeSkeleton
@@ -31,14 +30,14 @@ It creates 6 stacks :
 */
 //////////////////////// Parameters////////////////////////////////
 Taille=1;                   // Scalling factor to reduce image size before processing 
-minNeuron_part1=10;			// Minimal neuron area in order to exclude debris
-NucleusDiameter=15;			// Diameter of nuclei
+minNeuron_part1=10;	    // Minimal neuron area in order to exclude debris
+NucleusDiameter=15;	    // Diameter of nuclei
 minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
 minNeuron_part2=100;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
 minLengthSkelet=50;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
-minAxon=150; 				// Minimal length to be an axon (pixels)
-minNeurite=10; 				// Minimal length to be a neurite (pixels)
-ratio=2; 					// Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
+minAxon=150; 		    // Minimal length to be an axon (pixels)
+minNeurite=10; 		    // Minimal length to be a neurite (pixels)
+ratio=2; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
 
 /////////////////////////////pic up the previewsly used settings///////////////////////////
 ParameterFile=getDirectory("temp"); 
