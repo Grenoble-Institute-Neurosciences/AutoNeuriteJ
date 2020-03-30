@@ -7,8 +7,8 @@ It can proceeds several mosaic saved in different folders.
 
 This macro requires in each folder :
 		2 images(beware to the naming ) :
-			A original image of neurons (e.g neurons.tif)
-			A binary image of nucleus (e.g nuclei.tif)
+			An original image of neurons (e.g neurons.tif)
+			The corresponding original image of nucleus (e.g nuclei.tif)
 
 Additional plugins to install in Fiji/plugins: 
 		The plugin "Analyze Skeleton 2D/3D"  Developped by Ignacio Arganda-Carreras http://imagej.net/AnalyzeSkeleton
