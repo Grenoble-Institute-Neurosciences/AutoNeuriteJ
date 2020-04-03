@@ -36,7 +36,7 @@ minNeuron_part1=2000;	    // Minimal neuron area in order to exclude debris
 NucleusDiameter=40;	    // Diameter of nuclei
 minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
 minNeuron_part2=100;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
-minLengthSkelet=50;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
+minLengthSkelet=100;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
 minAxon=150; 		    // Minimal length to be an axon (pixels)
 minNeurite=10; 		    // Minimal length to be a neurite (pixels)
 ratio=2; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
@@ -204,14 +204,13 @@ for (i=0;i<liste.length;i++)
 		setOption("BlackBackground", true);
 		run("Convert to Mask");
 		run("Analyze Particles...", "size=&minNeuron_part1-100000 circularity=0-0.5 show=Masks exclude in_situ");
-		title=File.nameWithoutExtension;
 		getDimensions(width, height, channels, slices, frames);
 		Taille2=Taille/1.3;
 		xsize=width*Taille2;
 		ysize=height*Taille2;
 		run("Scale...", "x=Taille2 y=Taille2 width="+xsize+" height="+ysize+"  interpolation=Bilinear create");
 		run("Multiply...", "value=2500.000");
-		saveAs("tiff",newRep+"NeuronBin_"+title); close(); close();
+		saveAs("tiff",newRep+"NeuronBin_"+nomrep); close(); close();
 
 	}
 } /// End of liste length
@@ -220,7 +219,7 @@ print("Image scaling factor =" + Taille2);
 print("Quantification pixel size =" + pixelWidth*(1/Taille2) +" "+unite);
 print("Minimal area for a neuron : "  +minNeuron_part1+ "   Minimal area for nucleus :" +minNucleusSurface+ "   Maximal area for nucleus:" +maxNucleusSurface+ "");			
 print("Filter size for neuron segmentation  : "+minDoG+" and "+maxDoG);
-selectWindow("Log"); saveAs("Text",newRep+"Parameter_"+title); run("Close");	
+selectWindow("Log"); saveAs("Text",newRep+"Segmentation-Parameters_"+nomrep); run("Close");	
 } /// End of macro part 1
 }
 
@@ -688,31 +687,37 @@ setBatchMode(true);
 //********************************  Overlapping neurites Search*****************************************************************
 
 //////////////// Comparison between Neurite i and i+1
+			Neurite_by_size = Array.rankPositions(long_neurite);							// return the value i of the Neurites by ascending size order
+			Neurite_by_size = Array.invert(Neurite_by_size);									// return the value i of the Neurites by descending size order
 				
-			for(i=0;i<Nb_pointes-1;i++) {											// for each neurite i
-				x=getCoordinate("BX", i); y=getCoordinate("BY", i); 						// Gets coordinates  
-				nom="Neurone_"+j+"_Neurite"+i+1;									// Gets name		
-				for(k=i+1;k<Nb_pointes;k++) {										// for each next neurite
-					nom2="Neurone_"+j+"_Neurite"+k+1; 								// Gets name
-					selectWindow(nom2); run("Select None");												// 
-					selectWindow(nom);run("Select None");doWand(x, y, 0.0, "8-connected");				// Selects Neurite i
-					selectWindow(nom2);	run("Restore Selection");					// overlay of selected neurite i in the image neurite k 
-					getStatistics(area, mean);overlap=mean;							//  measures overlap between the two neurites
-					
-					if(overlap!=0) {												// If overlap exists
-						if(long_neurite[i]>long_neurite[k]) {						//  if i length>k  
-							type_neurite[k]=type_neurite[k]+1;						// Increase k type of neurite 
-							imageCalculator("Subtract ", nom2, nom);				// reDraws k without overlap 
-						}
-									
-						else {														//  if k length>i
-							type_neurite[i]=type_neurite[i]+1;						// Increase i type of neurite reDraws i without overlap
-							imageCalculator("Subtract ", nom, nom2);				// reDraws i without overlap				
-							} // end else																								
-					} // end if	overlap!=0					
+			for(i=0;i<Nb_pointes;i++) {											// for each neurite i
+								
+				x=getCoordinate("BX", Neurite_by_size[i]); y=getCoordinate("BY", Neurite_by_size[i]); 						// Gets coordinates  
+				nom="Neurone_"+j+"_Neurite"+Neurite_by_size[i]+1;									// Gets name		
+				for(k=0;k<Nb_pointes;k++) {										// for each other neurite k
+					if(k!=Neurite_by_size[i]){	
+						nom2="Neurone_"+j+"_Neurite"+k+1; 								// Gets name
+						selectWindow(nom2); run("Select None");												// 
+						selectWindow(nom);run("Select None");doWand(x, y, 0.0, "8-connected");				// Selects Neurite i
+						selectWindow(nom2);	run("Restore Selection");					// overlay of selected neurite i in the image neurite k 
+						getStatistics(area, mean);overlap=mean;							//  measures overlap between the two neurites
+						
+						if(overlap!=0) {												// If overlap exists
+							if(long_neurite[Neurite_by_size[i]]>long_neurite[k]) {						//  if i length>k  
+								type_neurite[k]=type_neurite[k]+1;						// Increase k type of neurite 
+								imageCalculator("Subtract ", nom2, nom);				// reDraws k without overlap 
+							}
+													
+							else {														//  if k length>i
+								type_neurite[Neurite_by_size[i]]=type_neurite[Neurite_by_size[i]]+1;						// Increase i type of neurite reDraws i without overlap
+								imageCalculator("Subtract ", nom, nom2);				// reDraws i without overlap				
+								} // end else																								
+						} // end if	overlap!=0					
+					}
 				} // end for(k=i+1;k<Nb_pointes;k++)
 			} // End neurites apparies
-
+			long_neurite = newArray(1000);												// Reset of arrays for next neuron
+			Neurite_by_size = newArray(1000);
 	/////////////////////////////  measure of neurite's length, and rank  //////////////////////////////////////////////////////////////
 			grand=newArray(1000);	MoyPrim=0	; NbrPrim=0	;	NbrNeurite=0;	LongPrim=0;													// For mean length computation of primary
 			pointesSuprime=0;
