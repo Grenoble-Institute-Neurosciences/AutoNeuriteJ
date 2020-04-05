@@ -2,10 +2,11 @@ AutoNeuriteJ
 To install the macro you need to copy the text file called "Neuron.lut" inside the "Luts" folder of Fiji/ImageJ.
 Run the macro entitled "AutoNeuriteJ (All in one)" with Fiji/ImageJ
 
-Note that two other ImageJ/Fiji plugins are requested by the macro :
+Note that tree other ImageJ/Fiji plugins are requested by the macro :
 
 The plugin "Analyze Skeleton 2D/3D"  Developped by Ignacio Arganda-Carreras http://imagej.net/AnalyzeSkeleton
-    the Morphology plugins from Gabriel Landini's website : http://www.mecourse.com/landinig/software/software.html
+The plugin "MorphoLibJ" Developped by David Legland and Ignacio Arganda-Carreras https://imagej.net/MorphoLibJ
+The plugin "Morphology" from Gabriel Landini's website : http://www.mecourse.com/landinig/software/software.html
 
 More information:
 
