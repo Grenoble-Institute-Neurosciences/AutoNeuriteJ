@@ -32,14 +32,14 @@ It creates 6 stacks :
 
 //////////////////////// Parameters////////////////////////////////////////////////////
 Taille=1;                   // Scalling factor to reduce image size before processing 
-minNeuron_part1=1500;	    // Minimal neuron area in order to exclude debris
+minNeuron_part1=2000;	    // Minimal neuron area in order to exclude debris
 NucleusDiameter=40;	    // Diameter of nuclei
 minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
-minNeuron_part2=2000;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
-minLengthSkelet=200;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
+minNeuron_part2=100;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
+minLengthSkelet=100;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
 minAxon=150; 		    // Minimal length to be an axon (pixels)
-minNeurite=20; 		    // Minimal length to be a neurite (pixels)
-ratio=1.5; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
+minNeurite=10; 		    // Minimal length to be a neurite (pixels)
+ratio=2; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
 
 /////////////////////////////pic up the previewsly used settings///////////////////////////
 ParameterFile=getDirectory("temp"); 
@@ -536,7 +536,7 @@ macro "AutoNeuriteJ_partIII [F1]" {
 //////////////////////// Different measures : neurone cell body expansion /////////////////////////////////////////////////////
 //////////////////////////////////Parameters/////////////////////////////////////////
 
-getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour0, minute0, second0, msec);
+getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour0, minute0, second, msec);
 
 //////////////////////////stack opening 
 defaultValue=1;
@@ -675,18 +675,13 @@ setBatchMode(true);
 				run("BinaryThin ", "kernel_a=[0 2 2 0 1 0 0 0 0 ] rotations=[rotate 45] iterations=-1 white"); 	// pruning
 				imageCalculator("AND", nom,"masque_arbres");										// Image of Neurone_j_Neurite_i	
 				doWand(x, y,0.0,"8-connected");run("Clear Outside");	run("Fill", "slice");	run("Skeletonize");		// Potential cleaning of other neurons
-				
-				
+
 				/////////////////// Measure of the length of the neurite using Analyze Skeleton plugins
-				selectWindow(nom);
-				rename("geo");
-				run("Geodesic Distance Map", "marker=pointes mask=geo distances=[Quasi-Euclidean (1,1.41)] output=[32 bits] normalize");
-				selectWindow("geo-geoddist");
-				getMinAndMax(min, max);close();
-				long_neurite[i]=max; 						// Length between the nucleus and the end
-				selectWindow("geo");
-				rename(nom);
-									
+				run("Analyze Skeleton (2D/3D)", "prune=none");
+				selectWindow("Results");
+				long_neurite[i]=getResult("Maximum Branch Length", 0);  // Length between the nucleus and the end
+				close();	close("Tagged Skeleton");								
+						
 				if(long_neurite[i]>=neurite_majeur) {neurite_majeur=long_neurite[i]; grand_neurite=i;}				// Record the longest neurite
 			}  
 
@@ -880,7 +875,7 @@ setBatchMode(true);
 		Nb_branchement =nResults-2;																	// Compute number of branch in this tree 
 					
 		if(type_neurite[grand_neurite]==1){
-			print(j+"\t\t\t\t\t\t\t\t  "+full_axon+"\t   "+Nb_branchement);             // Writing results
+			print(j+"\t\t\t\t\t\t  "+full_axon+"\t   "+Nb_branchement);             // Writing results
 			nbAxon=nbAxon+1;
 		}
 
@@ -944,16 +939,14 @@ roiManager("reset");
 if (isOpen("Summary")){		selectWindow("Summary");close();}
 } // End of condition
 	
-getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour1, minute1, second1, msec);
+getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour1, minute1, second, msec);
 
 
 hourSpent=hour1-hour0;
 minSpent=(minute1-minute0)+60*hourSpent;
-secSpent=(second1-second0)+60*minSpent;
 hourTotal=floor(minSpent/60);
 minTotal=minSpent-(hourTotal*60);
-secTotal=secSpent-(minTotal*60);
-print ("programme ran for : "+hourTotal+"h"+minTotal+"min"+secTotal+"sec");
+print ("programme ran for : "+hourTotal+"h"+minTotal+"min");
 	
 } // End of Macro part 3
 
