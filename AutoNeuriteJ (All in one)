@@ -931,7 +931,7 @@ selectWindow("Stack_BodySkelet");close();
 selectWindow("Stack_NoBodySkelet");close();
 	
 					
-File.makeDirectory(path[e]+"/mesure");
+File.makeDirectory(path[e]+"/Measures");
 
 
 Array.getStatistics(meanPrimaryLength, min, max, meanPL, stdDevPL);
@@ -944,7 +944,7 @@ print ("\t\t\t\t\t\t\t\t Mean primary neurite length and stedDev:  \t"+meanPL+" 
 print ("\t\t\t\t\t\t\t\t Mean primary neurite number and stedDev:  \t"+meanPN+"   \t   "+stdDevPN);
 
 selectWindow("Log");
-saveAs("Text", path[e] +"/mesure/Mesure");
+saveAs("Text", path[e] +"/Measures/Results");
 run("Close");
 	
 selectWindow("Stack_Body");run("neurons");
@@ -957,12 +957,12 @@ imageCalculator("Transparent-zero create stack", "Stack_Neuron_Originale","Stack
 selectWindow("Result of Stack_Neuron_Originale"); rename("Overlay");
 
 imageCalculator("Transparent-zero stack", "Overlay","Stack_Body");
-saveAs("tiff", path[e] +"/mesure/Overlay");close();
+saveAs("tiff", path[e] +"/Measures/Overlay");close();
 selectWindow("Stack_of_Neurones");
-saveAs("tiff", path[e] +"/mesure/Stack_of_Neurones");
+saveAs("tiff", path[e] +"/Measures/Stack_of_Neurones");
 
 selectWindow("Stack_Body");	
-saveAs("tiff", path[e] +"/mesure/Stack_of_Body");
+saveAs("tiff", path[e] +"/Measures/Stack_of_Body");
 
 run("Clear Results");
 run("Close All");
