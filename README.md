@@ -27,6 +27,20 @@ Part 1 will ask you to select the threshold that fits the best your neuron stain
 Part 2 and 3 settings are already recorded to run properly with DIV2 hippocampal neurons, but could be adapted for other neurons types.
 Part 2 and 3 are more automated so that different conditions (images) may be analyzed after indicating the directories containing all different files.
 
+Recommanded settings for hippocampal neurons at 1µm/pxl resolution :
+	-Part I :
+		- Minimal area for a neuron (in pixels) : 1500
+		- Nucleus diameter (in pixels) : 40			
+	-Part II :
+		- Minimal skeleton length of a neuritic tree (in pixels) : 50
+		- Minimal area for a binary Neuron (in pixels) : 2000
+		- Minimal total skeleton length to consider a neuron (in pixels) : 100
+	-Part III :
+		- Minimal size for a Neurite (in pixels) : 20
+		- Minimal size for an Axon (in pixels) : 150
+		- Ratio (Axon Length)/(Longest Primary Neurites length) to be an Axon : 1.3 to 2
+
+
 Important :
 
 To properly use this macro, a directory is usually created for each condition with the two images corresponding to the neurons staining and the nucleus staining in each. All parts of the macro will create subfolders inside each directory necessary for the following steps. Note that for Part 2 and Part 3, the file directories requested by the macro correspond to those newly created subfolders. Part 3 will create a final subfolder in each, called "Measures", containing :
@@ -35,4 +49,4 @@ To properly use this macro, a directory is usually created for each condition wi
         
 	- A stack of images named "Overlay": corresponding to the original images of the neurons with the overlapping image of the skeleton that had been measured, coded in different colors, depending on the hierarchy of the neurites (primary, secondary...) --> this stack normally allows a visual check of the proper functioning of the macro.
         
-	- A text file named "Values": that may be directly opened with Excel 
+	- A text file named "Results": that may be directly opened with Excel 
