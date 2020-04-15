@@ -36,7 +36,7 @@ minNeuron_part1=1500;	    // Minimal neuron area in order to exclude debris
 NucleusDiameter=40;	    // Diameter of nuclei
 minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
 minNeuron_part2=2000;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
-minLengthSkelet=200;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
+minLengthSkelet=100;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
 minAxon=150; 		    // Minimal length to be an axon (pixels)
 minNeurite=20; 		    // Minimal length to be a neurite (pixels)
 ratio=1.5; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
@@ -164,11 +164,8 @@ for (i=0;i<liste.length;i++)
 			pixelWidth2=pixelWidth;
 		}
 		run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");	
-			
-		
-
+	
 		getDimensions(width, height, channels, slices, frames);
-		
 		xsize=width*Taille;
 		ysize=height*Taille;
 
