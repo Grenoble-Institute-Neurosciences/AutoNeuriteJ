@@ -36,7 +36,7 @@ minNeuron_part1=1500;	    // Minimal neuron area in order to exclude debris
 NucleusDiameter=40;	    // Diameter of nuclei
 minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
 minNeuron_part2=2000;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
-minLengthSkelet=100;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
+minLengthSkelet=200;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
 minAxon=150; 		    // Minimal length to be an axon (pixels)
 minNeurite=20; 		    // Minimal length to be a neurite (pixels)
 ratio=1.5; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
@@ -89,8 +89,7 @@ in a new subfolder "resultats"
 */
 macro "AutoNeuriteJ Part I  [F1]" {
 
-minDoG=1;
-maxDoG=100;
+
 
 Dialog.create("Files names and parameter settings (AutoneuriteJ_Part1)");
 Dialog.addNumber("Original image pixel size (in µm):",Taille);
@@ -106,6 +105,9 @@ Taille=Dialog.getNumber();
 minNeuron_part1=Dialog.getNumber();
 nucleiName=Dialog.getString();
 NucleusDiameter=Dialog.getNumber();
+
+minDoG=1;
+maxDoG=NucleusDiameter*3;
 
 ////////////////////////////////////////////Save the new parameters used/////////////////////////
 filesaver=File.exists(ParameterFile+"/AutoneuriteJ_settings.txt");
@@ -150,8 +152,20 @@ for (i=0;i<liste.length;i++)
 		{
   			open(rep+liste[i]);
 		getPixelSize(unite, pixelWidth, pixelHeight);
-		run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 		title=getTitle();
+		if(Taille!=pixelWidth){
+			waitForUser("Original image pixel size do not match with metadata value. \n Please reset original pixel size in properties.");run("Properties...", "unit="+unite+" pixel_width="+pixelWidth+" pixel_height="+pixelHeight);
+			run("Properties...");
+			getPixelSize(unite2, pixelWidth2, pixelHeight2);
+			print("Original pixel size manually reset from "+pixelWidth+" "+unite+" to "+pixelWidth2+" "+unite2);
+		}
+		else{
+			unite2=unite;
+			pixelWidth2=pixelWidth;
+		}
+		run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");	
+			
+		
 
 		getDimensions(width, height, channels, slices, frames);
 		
@@ -182,11 +196,21 @@ for (i=0;i<liste.length;i++)
 		{
 		open(rep+liste[i]);
 		
-		run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
-		title=File.nameWithoutExtension;
 		
+		title=File.nameWithoutExtension;
+		getPixelSize(unite, pixelWidth, pixelHeight);
 		getDimensions(width, height, channels, slices, frames);
 		
+		if(Taille!=pixelWidth){
+			waitForUser("Original pixel size do not match with metadata value. \n Please reset original pixel size in properties.");run("Properties...", "unit="+unite+" pixel_width="+pixelWidth+" pixel_height="+pixelHeight);
+			run("Properties...");
+			getPixelSize(unite2, pixelWidth2, pixelHeight2);
+		}
+		else{
+			unite2=unite;
+			pixelWidth2=pixelWidth;
+		}
+		run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");		
 		xsize=width*Taille;
 		ysize=height*Taille;
 	 
@@ -216,12 +240,13 @@ for (i=0;i<liste.length;i++)
 
 	}
 } /// End of liste length
-print("Original pixel size :"+pixelWidth+" "+unite);
+print("Original pixel size :"+pixelWidth2+" "+unite2);
 print("Image scaling factor =" + Taille);
-print("Quantification pixel size =" + pixelWidth*(1/Taille) +" "+unite);
-print("Minimal area for a neuron : "  +minNeuron_part1+ "   Minimal area for nucleus :" +minNucleusSurface+ "   Maximal area for nucleus:" +maxNucleusSurface+ "");			
-print("Filter size for neuron segmentation  : "+minDoG+" and "+maxDoG);
-selectWindow("Log"); saveAs("Text",newRep+"Segmentation-Parameters_"+nomrep); run("Close");	
+print("Quantification pixel size =" + pixelWidth2*(1/Taille) +" "+unite2);
+print("Minimal area for a neuron (in pixels) : "  +minNeuron_part1);
+print("Nucleus diameter (in pixels) : " +NucleusDiameter);			
+print("Filter size for neuron segmentation  : Median blur (pxl)="+minDoG+" and Gaussian blur (pxl)="+maxDoG);
+selectWindow("Log"); saveAs("Text",newRep+"Part I-settings_of_"+nomrep); run("Close");	
 } /// End of macro part 1
 }
 
@@ -482,10 +507,12 @@ for (e=0; e<nombre_condition; e++) {                                          //
 		
 ////////////////// Saving and closure of stacks and ROI selections in a file named "resultat" created in the original image path////////////////
 
-	print("min Primary Neurite Tree size:   "+minNeuriticTree+"   min Neurons area :     " + minNeuron_part2+"   min Total Skeleton size  :  "+minLengthSkelet);	
-	print("Neurons with a single nucleus:   "+number_Neurons+"   Number of connected Neurons :     " + connected_neurons+"   Number of Skeleton too short :  "+SkelettooShort);	
-	print ("Number of neurons considered:   "+number_Neurons-SkelettooShort);		
-	selectWindow("Log"); saveAs("Text", sauvegarde+"/neurons_count"); run("Close");			
+	print("min Primary Neurite Tree size (in pixels) :  "+minNeuriticTree);
+	print("min Neurons area (in pixels) :  " + minNeuron_part2);
+	print("min Total Skeleton size (in pixels) :  "+minLengthSkelet);	
+	print("Isolated neurons:   "+number_Neurons+"   Number of connected Neurons :     " + connected_neurons+"   Number of Skeleton too short :  "+SkelettooShort);	
+	print ("Number of isolated neurons considered:   "+number_Neurons-SkelettooShort);		
+	selectWindow("Log"); saveAs("Text", sauvegarde+"/Part II-settings and neurons_count"); run("Close");			
 
 	selectWindow("Stack_BodySkelet");run("Remove Overlay");
 	saveAs("tiff",sauvegarde+"/r_"+title2+"/Stack_BodySkelet"); close();
@@ -536,7 +563,7 @@ macro "AutoNeuriteJ_partIII [F1]" {
 //////////////////////// Different measures : neurone cell body expansion /////////////////////////////////////////////////////
 //////////////////////////////////Parameters/////////////////////////////////////////
 
-getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour0, minute0, second, msec);
+getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour0, minute0, second0, msec);
 
 //////////////////////////stack opening 
 defaultValue=1;
@@ -617,9 +644,11 @@ setBatchMode(true);
 		getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour1, minute1, second, msec);
 		print (hour1+"h:"+minute1);
 		print(path[e]);
-		print("minAxon="+minAxon);
-		print("minNeurite="+minNeurite);
-		print("ratio="+ratio);	
+		print("\n AutoNeuriteJ_Part III_settings : \n minimal size of Axons (in pixels)="+minAxon);
+		print("minimal size of Neurites (in pixels)="+minNeurite);
+		print("Axonal size ratio="+ratio);
+		print("Neurite Order : 1=axon / 2=primary neurite / 3=secondary neurite / 4=tertiary neurite ...");
+		print("\n Measures : ");
 		print("Neuron# \t Primary Neurites # \t Neurite Order  \t Primary Neurites mean Length \t Neurite Length \t Longest Neurite Length \t Axonal Tree length \t Axonal Tree Branches #");
 		
 		
@@ -675,13 +704,18 @@ setBatchMode(true);
 				run("BinaryThin ", "kernel_a=[0 2 2 0 1 0 0 0 0 ] rotations=[rotate 45] iterations=-1 white"); 	// pruning
 				imageCalculator("AND", nom,"masque_arbres");										// Image of Neurone_j_Neurite_i	
 				doWand(x, y,0.0,"8-connected");run("Clear Outside");	run("Fill", "slice");	run("Skeletonize");		// Potential cleaning of other neurons
-
+				
+				
 				/////////////////// Measure of the length of the neurite using Analyze Skeleton plugins
-				run("Analyze Skeleton (2D/3D)", "prune=none");
-				selectWindow("Results");
-				long_neurite[i]=getResult("Maximum Branch Length", 0);  // Length between the nucleus and the end
-				close();	close("Tagged Skeleton");								
-						
+				selectWindow(nom);
+				rename("geo");
+				run("Geodesic Distance Map", "marker=pointes mask=geo distances=[Quasi-Euclidean (1,1.41)] output=[32 bits] normalize");
+				selectWindow("geo-geoddist");
+				getMinAndMax(min, max);close();
+				long_neurite[i]=max; 						// Length between the nucleus and the end
+				selectWindow("geo");
+				rename(nom);
+									
 				if(long_neurite[i]>=neurite_majeur) {neurite_majeur=long_neurite[i]; grand_neurite=i;}				// Record the longest neurite
 			}  
 
@@ -875,7 +909,7 @@ setBatchMode(true);
 		Nb_branchement =nResults-2;																	// Compute number of branch in this tree 
 					
 		if(type_neurite[grand_neurite]==1){
-			print(j+"\t\t\t\t\t\t  "+full_axon+"\t   "+Nb_branchement);             // Writing results
+			print(j+"\t\t\t\t\t\t\t\t  "+full_axon+"\t   "+Nb_branchement);             // Writing results
 			nbAxon=nbAxon+1;
 		}
 
@@ -939,14 +973,16 @@ roiManager("reset");
 if (isOpen("Summary")){		selectWindow("Summary");close();}
 } // End of condition
 	
-getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour1, minute1, second, msec);
+getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour1, minute1, second1, msec);
 
 
 hourSpent=hour1-hour0;
 minSpent=(minute1-minute0)+60*hourSpent;
+secSpent=(second1-second0)+60*minSpent;
 hourTotal=floor(minSpent/60);
 minTotal=minSpent-(hourTotal*60);
-print ("programme ran for : "+hourTotal+"h"+minTotal+"min");
+secTotal=secSpent-(minTotal*60);
+print ("programme ran for : "+hourTotal+"h"+minTotal+"min"+secTotal+"sec");
 	
 } // End of Macro part 3
 
