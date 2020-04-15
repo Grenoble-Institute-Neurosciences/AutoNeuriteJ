@@ -28,6 +28,7 @@ Part 2 and 3 settings are already recorded to run properly with DIV2 hippocampal
 Part 2 and 3 are more automated so that different conditions (images) may be analyzed after indicating the directories containing all different files.
 
 Recommanded settings for hippocampal neurons at 1µm/pxl resolution :
+
 	-Part I :
 		- Minimal area for a neuron (in pixels) : 1500
 		- Nucleus diameter (in pixels) : 40			
