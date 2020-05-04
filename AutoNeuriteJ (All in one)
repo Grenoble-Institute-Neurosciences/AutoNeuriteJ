@@ -33,12 +33,12 @@ It creates 6 stacks :
 //////////////////////// Parameters////////////////////////////////////////////////////
 Taille=1;                   // Scalling factor to reduce image size before processing 
 minNeuron_part1=1500;	    // Minimal neuron area in order to exclude debris
-NucleusDiameter=40;	    // Diameter of nuclei
-minNeuriticTree=50;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
+NucleusDiameter=30;	    // Diameter of nuclei
+minNeuriticTree=15;         // Defines the minimal length to be a primary neurite tree if smaller it is erased from the skeleton
 minNeuron_part2=2000;        // Defines the minimal area in the binary image to be a neuron if less the neuron is not considered
 minLengthSkelet=100;         // Defines the minimal length of a neuritic skeleton if smaller the neuron is not considered
 minAxon=150; 		    // Minimal length to be an axon (pixels)
-minNeurite=20; 		    // Minimal length to be a neurite (pixels)
+minNeurite=15; 		    // Minimal length to be a neurite (pixels)
 ratio=1.5; 		    // Minimal ratio between (mean primary neurite length) and (axonal length)--> Minimal ratio to be an axon
 
 /////////////////////////////pic up the previewsly used settings///////////////////////////
