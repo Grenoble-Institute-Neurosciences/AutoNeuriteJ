@@ -48,7 +48,7 @@ Important :
 
 To properly use this macro, a directory is usually created for each condition with the two images corresponding to the neurons staining and the nucleus staining. All parts of the macro will create subfolders inside each directory necessary for the subsequent steps. Note that for Part 2 and Part 3, the directories requested by the macro correspond to the newly created subfolders. Part 3 will create a final subfolder, called "Measures", containing :
 	
-	- A stack of images named "Stack_of_Neurones": corresponding to the skeletons that had been measured, coded in different colors, depending on the hierarchy of the neurites (primary, secondary...).
+	- A stack of images named "Stack_of_Neurites": corresponding to the skeletons that had been measured, coded in different colors, depending on the hierarchy of the neurites (primary, secondary...).
         
 	- A stack of images named "Overlay": corresponding to the original images of the neurons with the overlapping image of the skeleton, with the same color code than above --> this stack normally allows a visual check of the proper functioning of the macro.
         
