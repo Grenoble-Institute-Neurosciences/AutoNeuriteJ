@@ -33,13 +33,13 @@ Recommended settings for hippocampal neurons at 1µm/pxl resolution :
 
 	-Part I :
 		- Minimal area for a neuron (in pixels) : 1500
-		- Nucleus diameter (in pixels) : 40			
+		- Nucleus diameter (in pixels) : 30			
 	-Part II :
-		- Minimal skeleton length of a neuritic tree (in pixels) : 50
+		- Minimal skeleton length of a neuritic tree (in pixels) : 15
 		- Minimal area for a binary Neuron (in pixels) : 2000
 		- Minimal total skeleton length to consider a neuron (in pixels) : 100
 	-Part III :
-		- Minimal size for a Neurite (in pixels) : 20
+		- Minimal size for a Neurite (in pixels) : 15
 		- Minimal size for an Axon (in pixels) : 150
 		- Ratio (Axon Length)/(Longest Primary Neurites length) to be an Axon : 1.3 to 2
 
