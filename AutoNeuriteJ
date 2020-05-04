@@ -959,10 +959,7 @@ selectWindow("Result of Stack_Neuron_Originale"); rename("Overlay");
 imageCalculator("Transparent-zero stack", "Overlay","Stack_Body");
 saveAs("tiff", path[e] +"/Measures/Overlay");close();
 selectWindow("Stack_of_Neurones");
-saveAs("tiff", path[e] +"/Measures/Stack_of_Neurones");
-
-selectWindow("Stack_Body");	
-saveAs("tiff", path[e] +"/Measures/Stack_of_Body");
+saveAs("tiff", path[e] +"/Measures/Stack_of_Neurites");
 
 run("Clear Results");
 run("Close All");
