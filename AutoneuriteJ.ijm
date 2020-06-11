@@ -660,7 +660,18 @@ setBatchMode(true);
 		nbAxon=0;
 		
 		for(j=1;j<=nb_neurones;j++){
-					
+
+//////////////////Search for potential absence of Body in the Stack_Body			
+selectWindow("Stack_Body");	setSlice(j);
+getStatistics(area, mean);Body=mean;
+if(Body==0){selectWindow("Stack_NoBodySkelet"); setSlice(j); run("Delete Slice");
+			selectWindow("Stack_BodySkelet"); setSlice(j); run("Delete Slice");
+			selectWindow("Stack_Body"); setSlice(j); run("Delete Slice");
+			selectWindow("Stack_Neuron_Originale"); setSlice(j); run("Delete Slice");
+			j=j-1;
+			nb_neurones=nb_neurones-1;}
+else{
+////////////////////////////////////////////////////////////////////////////////////				
 			selectWindow("Stack_NoBodySkelet");	setSlice(j); run("Duplicate...", "title=masque_arbres");	 // Neurites skeleton									
 			selectWindow("Stack_BodySkelet"); setSlice(j); 	run("Duplicate...", "title=pointes"); run("Duplicate...", "title=S_et_S"); // used to detect neurites extremities
 			selectWindow("Stack_Body");	setSlice(j);	run("Duplicate...", "title=CBS");			// Cell body of neuron number j									
@@ -922,7 +933,7 @@ setBatchMode(true);
 	meanPrimaryNumber=push(meanPrimaryNumber,NbrPrim);
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-		}}   // Next Neuron
+		}}}   // Next Neuron
 
 		
 run("Images to Stack", "name=Stack_of_Neurones title=MAX use");
