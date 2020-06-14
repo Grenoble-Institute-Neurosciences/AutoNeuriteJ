@@ -95,7 +95,7 @@ Dialog.create("Files names and parameter settings (AutoneuriteJ_Part1)");
 Dialog.addNumber("Original image pixel size (in µm):",Taille);
 Dialog.addString("Neuron image name must contain :","Cy3");
 Dialog.addNumber("Minimal area for a neuron (in pixels) ?",minNeuron_part1);
-Dialog.addString("Neuron image name must contain ?","DAPI");
+Dialog.addString("Nucleus image name must contain ?","DAPI");
 Dialog.addNumber("Nucleus diameter (in pixels)",NucleusDiameter);
 
 Dialog.show();
@@ -550,7 +550,7 @@ minSpent=(minute1-minute0)+60*hourSpent;
 hourTotal=floor(minSpent/60);
 minTotal=minSpent-(hourTotal*60);
 
-print ("programme ran for : "+hourTotal+"h"+minTotal+"min");
+print ("program ran for : "+hourTotal+"h"+minTotal+"min");
  
 } // End of macro part II
 }
@@ -987,7 +987,7 @@ secSpent=(second1-second0)+60*minSpent;
 hourTotal=floor(minSpent/60);
 minTotal=minSpent-(hourTotal*60);
 secTotal=secSpent-(minTotal*60);
-print ("programme ran for : "+hourTotal+"h"+minTotal+"min"+secTotal+"sec");
+print ("program ran for : "+hourTotal+"h"+minTotal+"min"+secTotal+"sec");
 	
 } // End of Macro part 3
 
