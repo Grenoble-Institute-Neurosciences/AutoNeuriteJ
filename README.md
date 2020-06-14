@@ -1,6 +1,6 @@
 AutoNeuriteJ :
 
-To install the macro you need to copy the text file called "Neuron.lut" inside the "Luts" folder of Fiji/ImageJ.
+To install the macro you need to copy the text file called "neurons.lut" inside the "Luts" folder of Fiji/ImageJ.
 
 Note that tree other ImageJ/Fiji plugins are requested by the macro :
 	
