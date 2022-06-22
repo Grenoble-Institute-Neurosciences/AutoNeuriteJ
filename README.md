@@ -8,8 +8,8 @@ Note that tree other ImageJ/Fiji plugins are requested by the macro :
 	The plugin "MorphoLibJ" Developped by David Legland and Ignacio Arganda-Carreras https://imagej.net/MorphoLibJ (in Fiji : check "IJBP-Plugins" in the Update site window).
 	The plugin "Morphology" from Gabriel Landini's website : http://www.mecourse.com/landinig/software/software.html (in Fiji : check "Morphology" in the Update site window).
 
-Then you can run the macro entitled "AutoNeuriteJ (All in one)" with Fiji/ImageJ.
-Or use the macro entitled "AutoneuriteJ-for-mac" if you're using a mac.
+Then you can run the macro entitled "AutoNeuriteJ.ijm" with Fiji/ImageJ.
+Or use the macro entitled "AutoneuriteJ-for-mac.ijm" if you're using a mac.
 
 More informations :
 
