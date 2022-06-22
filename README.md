@@ -9,6 +9,7 @@ Note that tree other ImageJ/Fiji plugins are requested by the macro :
 	The plugin "Morphology" from Gabriel Landini's website : http://www.mecourse.com/landinig/software/software.html (in Fiji : check "Morphology" in the Update site window).
 
 Then you can run the macro entitled "AutoNeuriteJ (All in one)" with Fiji/ImageJ.
+Or use the macro entitled "AutoneuriteJ-for-mac" if you're using a mac.
 
 More informations :
 
