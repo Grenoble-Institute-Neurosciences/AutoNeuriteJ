@@ -699,7 +699,7 @@ else{
 						}
 		else{
 	
-			grand_neurite = -1; neurite_majeur=-1;
+			grand_neurite = 0; neurite_majeur = 0;
 			for(i=0;i<Nb_pointes;i++) {																// for each ends	
 				type_neurite[i]=2; 																	// Neurite type: 1=axon, 2=neurite (Default), 3...=secondary branch (or more) 
 				selectWindow("S_et_S"); 
